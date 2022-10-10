@@ -1,0 +1,164 @@
+"source $VIMRUNTIME/debian.vim
+
+" Vim configuration
+" Credits:
+"   Gary Bernhardt  <destroyallsoftware.com>
+"   Drew Neil  <vimcasts.org>
+"   Tim Pope  <tbaggery.com>
+"   Janus  <github.com/carlhuda/janus>
+"   Mislav <mislav.uniqpath.com/2011/12/vim-revisited>
+"   Stefano Verna  <github.com/stefanoverna/dotfiles>
+"   Luca Guidi  <github.com/jodosha/dotfiles>
+
+set nocompatible     " Vim behavior, not Vi.
+
+filetype plugin indent on
+syntax enable        " Enable syntax highlight
+
+set encoding=utf-8   " Use UTF-8 encoding
+set clipboard=unnamed
+set backupdir=~/.dotfiles/vim/_backup    " where to put backup files.
+set directory=~/.dotfiles/vim/_temp      " where to put swap files.
+set backupskip=/tmp/*,/private/tmp/*
+set nobackup                      " Don't make a backup before overwriting a file.
+set nowritebackup
+set noswapfile       " Don't use swap files (.swp)
+set autoread         " Autoreload buffers
+let mapleader = ","
+
+" History, Cursor, Rulers
+" set history=50                  " Just remember last 50 commands
+set laststatus=2                  " Always display the status line
+set ruler                         " Show the cursor position all the time
+set number                        " Show line numbers
+set showcmd                       " Display incomplete commands
+set cursorline                    " Highlight current cursor line
+set mouse=a                       " enable mouse support
+set visualbell                    " No beeping.
+
+" Status bar
+set showmode                      " Display the mode you're in.
+set hidden                        " Handle multiple buffers better.
+set wildmenu                      " Enhanced command line completion.
+
+" Tabs and white spaces
+set wrap                        " Don't wrap lines
+set tabstop=2                     " Tabs are always 2 spaces
+set softtabstop=2
+set expandtab                     " Expand tabs into spaces
+set shiftwidth=2                  " Reindent with 2 spaces (using <<)
+set list                          " Show invisible chars
+set listchars=""                  " Reset listchars
+set list listchars=tab:»·,trail:· " Set listchars for tabs and trailing spaces
+set scrolloff=3                   " provide some context when editing
+set backspace=indent,eol,start    " allow backspacing over everything in insert mode
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.scssc,*.sassc " Ignore caches and binaries
+
+" Apparence
+set t_Co=256
+set termguicolors
+set background=dark
+colorscheme onedark
+set termguicolors
+
+" Search
+set hlsearch    " Highlight matches
+set incsearch   " Incremental searching
+set ignorecase  " Searches are case insensitive...
+set smartcase   " ... unless they contain at least one capital letter
+"highlight Search ctermfg=black ctermbg=yellow guifg=#7e705a guibg=#f4bc87
+"highlight ColorColumn guibg=#2d2d2d ctermbg=18 ctermfg=246
+
+set colorcolumn=80
+
+" Bubble single lines
+nmap <C-Up> ddkP
+nmap <C-Down> ddp
+" Bubble multiple lines
+vmap <C-Up> xkP`[V`]
+vmap <C-Down> xp`[V`]
+
+" Use modeline overrides
+set modeline
+set modelines=10
+
+" Hide highlited search
+nmap <silent> <C-N> :silent noh<CR>
+
+" Re-indent entire buffer
+map   <silent> <F5> mmgg=G'm
+imap  <silent> <F5> <Esc> mmgg=G'm
+vmap  <tab> =
+nmap  <tab> ==
+
+" Disable arrow keys, use hjkl
+noremap  <Up> ""
+noremap  <Down> ""
+noremap  <Left> ""
+noremap  <Right> ""
+
+" Navigate buffers
+noremap <S-left> :bprev<CR>·
+noremap <S-right> :bnext<CR>
+
+" When using tmux/screen, $TERM should be set to screen-256color. this is a
+" fix to use arrow keys correctly
+if &term =~ '^screen'
+  set mouse+=a
+  " tmux and neovim know the extended mouse mode
+  if !has('nvim')
+    set ttymouse=xterm2
+  endif
+
+  " tmux will send xterm-style keys when its xterm-keys option is on
+  execute "set <xUp>=\e[1;*A"
+  execute "set <xDown>=\e[1;*B"
+  execute "set <xRight>=\e[1;*C"
+  execute "set <xLeft>=\e[1;*D"
+endif
+
+" Navigate split windows
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+if has('nvim')
+  nnoremap <BS> <c-w>h
+endif
+if !has('nvim')
+  nnoremap <c-h> <c-w>h
+endif
+
+" Disable K command (:help K)
+nmap K <Nop>
+
+" Search visually selected text
+vnorem // y/<c-r>"<cr>
+
+" Find merge conflict markers
+nmap <silent> <leader>cf <ESC>/\v^[<=>]{7}( .*\|$)<CR>
+
+" Filetypes
+
+" In Makefiles, use real tabs, not tabs expanded to spaces
+au FileType make set noexpandtab
+
+" Make sure all markdown files have the correct filetype set and setup wrapping
+au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set ft=markdown
+
+" Treat JavaScript derived files the same way
+au BufNewFile,BufRead *.{json,es6} set ft=javascript
+
+" make Python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
+au FileType python set softtabstop=4 tabstop=4 shiftwidth=4 textwidth=79
+
+" Remember last location in file, but not for commit messages.
+" see :help last-position-jump
+au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
+  \| exe "normal! g`\"" | endif
+
+" automatically clear whitespaces owhen saving buffer
+" au BufWritePre * :call s:clearWhitespaces()
+
+set ff=unix
+au BufRead,BufNewFile *.* :set ff=unix
