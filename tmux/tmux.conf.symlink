@@ -1,0 +1,106 @@
+# Command prefix
+set -g prefix C-a
+unbind-key C-b
+bind C-a send-prefix
+
+# Screen and mouse stuff
+set-option -g -q mouse on
+# Scrolling
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e'"
+
+set -g monitor-activity    on
+set -g repeat-time         200
+set -g default-terminal    "screen-256color"
+set-window-option -g xterm-keys on # Proxy keys to terminal (eg: vim)
+set-option -g default-shell /bin/zsh
+set-option -g history-limit 3002
+
+# Status Bar Items
+set -g status-left-length 40
+set -g status-interval 5
+set -g status-left "#[default]"
+set -g status-right "#%d %b %R [#S:#I]"
+set -g status-justify centre
+
+# Do not choose a title for me
+setw -g automatic-rename on
+
+# Reduce the command delay time to something a bit shorter
+set -sg escape-time 1
+# Extend the repeat interval for repeatable commands (e.g., resize-pane)
+set -sg repeat-time 1000
+
+# Index windows from 1, not 0, so they line up a little better
+# with the order of the number keys on the keyboard
+set -g base-index 1
+setw -g pane-base-index 1
+
+# Clean screen
+bind -n C-p send-keys -R \; clear-history \; display "clean!"
+
+# Copy and paste vim style
+unbind [
+bind Escape copy-mode
+bind -T copy-mode-vi 'v' send-keys -X begin-selection
+bind -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
+unbind p
+bind p paste-buffer
+
+# Manage windows, panes and session
+bind w new-window
+bind-key c kill-pane
+bind-key k confirm-before -p "Kill window #W?"  kill-window
+bind-key q confirm-before -p "Kill session #S?" kill-session
+
+# Split windows
+bind v split-window -h
+bind s split-window -v
+
+# Navigate panes like vim
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# C-a-l / C-a-l Navigate windows
+bind -r C-h select-window -t :-
+bind -r C-l select-window -t :+
+
+# Resizing panes
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+# Reload config
+bind r source-file ~/.tmux.conf \; display "~/.tmux.conf reloaded!"
+
+# Colors
+# Ensure we're using 256 colors
+set -g default-terminal "screen-256color"
+
+# Status bar
+set -g status-fg white
+set -g status-bg "#333333"
+
+# Window list
+setw -g window-status-style fg=white
+setw -g window-status-style bg=default
+setw -g window-status-style dim
+setw -g window-status-current-style fg=colour233
+setw -g window-status-current-style bg=colour4
+set -g window-status-activity-style bold
+
+# Pane borders
+set -g pane-border-style fg=black
+set -g pane-active-border-style fg=colour39
+
+# Command line
+set -g message-style fg=white
+set -g message-style bg=black
+set -g message-style bright
+
+# Load Tmuxline if present
+if-shell "test -f ~/.tmuxline.conf" "source ~/.tmuxline.conf"
