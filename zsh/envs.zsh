@@ -1,6 +1,6 @@
 export PAGER="/usr/bin/less"
 export MANPAGER="/usr/bin/less"
-export EDITOR=`which nvim`
+export EDITOR=`which vim`
 export GIT_EDITOR=$EDITOR
 export NOSE_REDNOSE=1
 

@@ -106,10 +106,6 @@ noremap <S-right> :bnext<CR>
 " fix to use arrow keys correctly
 if &term =~ '^screen'
   set mouse+=a
-  " tmux and neovim know the extended mouse mode
-  if !has('nvim')
-    set ttymouse=xterm2
-  endif
 
   " tmux will send xterm-style keys when its xterm-keys option is on
   execute "set <xUp>=\e[1;*A"
@@ -122,12 +118,6 @@ endif
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-l> <c-w>l
-if has('nvim')
-  nnoremap <BS> <c-w>h
-endif
-if !has('nvim')
-  nnoremap <c-h> <c-w>h
-endif
 
 " Disable K command (:help K)
 nmap K <Nop>
